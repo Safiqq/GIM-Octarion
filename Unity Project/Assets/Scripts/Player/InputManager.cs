@@ -13,13 +13,16 @@ namespace InputAssets
 		public Vector2 move;
 		[Header("Alphabet Input Values")]
 		public bool[] alphabets = new bool[26];
-		[Header("Capslock Input Value")]
-		public bool capsLock;
+		[Header("Target Input Value")]
+		public bool target;
+		[Header("Change Input Value")]
+		public bool changeTarget;
 
 		[Header("Mouse Cursor Settings")]
 		public bool cursorLocked = true;
 		public bool cursorInputForLook = true;
 
+		private int alphabetCount = 0;
 
 #if ENABLE_INPUT_SYSTEM
 		
@@ -133,6 +136,16 @@ namespace InputAssets
 			AlphabetInput(value.isPressed, 25);
 		}
 
+		public void OnTarget(InputValue value)
+        {
+			TargetInput(value.isPressed);
+        }
+
+		public void OnChangeTarget(InputValue value)
+		{
+			ChangeTargetInput(value.isPressed);
+		}
+
 #endif
 
 		public void MoveInput(Vector2 newMoveDirection)
@@ -142,8 +155,24 @@ namespace InputAssets
 
 		public void AlphabetInput(bool newValue, int idx)
 		{
-            alphabets[idx] = newValue;
-			StartCoroutine(CancelAlphabetInput(idx));
+			if (alphabetCount == 0)
+            {
+				alphabets[idx] = newValue;
+				alphabetCount++;
+				StartCoroutine(CancelAlphabetInput(idx));
+			}
+		}
+
+		public void TargetInput(bool newValue)
+        {
+			target = newValue;
+			StartCoroutine(CancelTargetInput());
+        }
+
+		public void ChangeTargetInput(bool newValue)
+        {
+			changeTarget = newValue;
+			StartCoroutine(CancelChangeTargetInput());
 		}
 
 		private void OnApplicationFocus(bool hasFocus)
@@ -160,9 +189,22 @@ namespace InputAssets
         {
             yield return new WaitForEndOfFrame();
             alphabets[idx] = false;
+			alphabetCount--;
         }
 
-        private void Awake()
+		IEnumerator CancelTargetInput()
+        {
+			yield return new WaitForEndOfFrame();
+			target = false;
+		}
+
+		IEnumerator CancelChangeTargetInput()
+		{
+			yield return new WaitForEndOfFrame();
+			changeTarget = false;
+		}
+
+		private void Awake()
         {
 
         }

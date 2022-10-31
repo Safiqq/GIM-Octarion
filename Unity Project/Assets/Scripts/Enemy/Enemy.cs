@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class Enemy : MonoBehaviour
 {
     public enum EnemyType { mobs, bomb, boss};
+    public enum EnemyState { live, dead}
 
     [Header("Enemy Properties")]
     [Tooltip("Enemy type")]
@@ -17,6 +20,12 @@ public class Enemy : MonoBehaviour
     public float viewAngle = 60;
     [Tooltip("Force magnitude when enemy collides with player")]
     public float knockBackMagnitude = 10;
+    [Tooltip("Enemy canvas to show its text")]
+    public Canvas enemyCanvas;
+    [Tooltip("Enemy's current state")]
+    public EnemyState enemyState;
+    [Tooltip("Tells whether player is targeting on the enemy or not")]
+    public bool isOnTarget = false;
 
     private Transform playerTransform;
     private Rigidbody2D rb, playerRB;
@@ -24,6 +33,7 @@ public class Enemy : MonoBehaviour
     private bool ignoreLimit = false;
     private Spawner spawner;
     private float yLowerBound = -10;
+    private TextMeshProUGUI textUI;
 
     private void Awake()
     {
@@ -32,6 +42,11 @@ public class Enemy : MonoBehaviour
         playerRB = playerTransform.GetComponent<Rigidbody2D>();
 
         spawner = GameObject.Find("Enemy Spawner").GetComponent<Spawner>();
+
+        enemyCanvas = GetComponentInChildren<Canvas>();
+        textUI = enemyCanvas.GetComponentInChildren<TextMeshProUGUI>();
+
+        enemyState = EnemyState.dead;
 
         rb = GetComponent<Rigidbody2D>();
         ignoreLimit = false;
@@ -53,6 +68,7 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
+        textUI.text = text;
         DetectType();
     }
 
@@ -92,7 +108,7 @@ public class Enemy : MonoBehaviour
         char currentChar;
         int idx;
 
-        if (text.Length > 0)
+        if (text.Length > 0 && isOnTarget)
         {
             currentChar = text[0];
 
@@ -110,7 +126,7 @@ public class Enemy : MonoBehaviour
 
     void DetectLife()
     {
-        if (text.Length == 0)
+        if (text.Length == 0 && enemyState == EnemyState.live)
         {
 
             if (enemyType != EnemyType.bomb)
@@ -126,8 +142,6 @@ public class Enemy : MonoBehaviour
                     ignoreLimit = true;
                 }
             }
-
-            UpdateSpawnerCount();
         }
     }
 
@@ -157,9 +171,11 @@ public class Enemy : MonoBehaviour
 
     void Terminate()
     {
+        enemyState = EnemyState.dead;
         gameObject.SetActive(false);
 
-
+        UpdateSpawnerCount();
+        spawner.activeEnemies.Remove(gameObject);
     }
 
     void UpdateSpawnerCount()

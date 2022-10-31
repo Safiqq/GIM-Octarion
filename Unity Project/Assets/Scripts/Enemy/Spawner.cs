@@ -5,6 +5,7 @@ using UnityEngine;
 public class Spawner : MonoBehaviour
 {
     public List<GameObject> enemyPrefabs;
+    public List<GameObject> activeEnemies;
 
     private List<GameObject> mobs = new List<GameObject>();
     private List<GameObject> bombs = new List<GameObject>();
@@ -79,18 +80,44 @@ public class Spawner : MonoBehaviour
     void Spawn()
     {
         GameObject currentGameObject;
+        Enemy enemyComponent;
 
         if (activeBombsCount < bombs.Count)
         {
+            int i;
+            bool terminate;
+            GameObject temp;
+
             // move currentGameObject to the back of the list
             currentGameObject = bombs[0];
             bombs.RemoveAt(0);
             bombs.Add(currentGameObject);
 
-            currentGameObject.SetActive(true);
-            currentGameObject.transform.position = new Vector2(Random.Range(-horizontalBound, horizontalBound), yUpperBound);
+            enemyComponent = currentGameObject.GetComponent<Enemy>();
+            enemyComponent.enemyState = Enemy.EnemyState.live;
 
             activeBombsCount++;
+
+            currentGameObject.transform.position = new Vector2(Random.Range(-horizontalBound, horizontalBound), yUpperBound);
+
+            // insert with sorting
+            activeEnemies.Add(currentGameObject);
+            terminate = false;
+            i = activeEnemies.Count - 1;
+            while (i > 0 && !terminate)
+            {
+                if (activeEnemies[i].transform.position.y < activeEnemies[i - 1].transform.position.y)
+                {
+                    temp = activeEnemies[i];
+
+                    activeEnemies[i] = activeEnemies[i - 1];
+                    activeEnemies[i - 1] = temp;
+                }
+
+                i--;
+            }
+
+            currentGameObject.SetActive(true);
         }
     }
 }
