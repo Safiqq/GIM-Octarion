@@ -70,7 +70,7 @@ public class Spawner : MonoBehaviour
 
     void Start()
     {
-        InvokeRepeating("Spawn", 5, 5);
+        InvokeRepeating("Spawn", 1, 3);
     }
     void Update()
     {
@@ -80,7 +80,6 @@ public class Spawner : MonoBehaviour
     void Spawn()
     {
         GameObject currentGameObject;
-        Enemy enemyComponent;
 
         if (activeBombsCount < bombs.Count)
         {
@@ -93,9 +92,6 @@ public class Spawner : MonoBehaviour
             bombs.RemoveAt(0);
             bombs.Add(currentGameObject);
 
-            enemyComponent = currentGameObject.GetComponent<Enemy>();
-            enemyComponent.enemyState = Enemy.EnemyState.live;
-
             activeBombsCount++;
 
             currentGameObject.transform.position = new Vector2(Random.Range(-horizontalBound, horizontalBound), yUpperBound);
@@ -104,6 +100,7 @@ public class Spawner : MonoBehaviour
             activeEnemies.Add(currentGameObject);
             terminate = false;
             i = activeEnemies.Count - 1;
+
             while (i > 0 && !terminate)
             {
                 if (activeEnemies[i].transform.position.y < activeEnemies[i - 1].transform.position.y)
@@ -112,9 +109,14 @@ public class Spawner : MonoBehaviour
 
                     activeEnemies[i] = activeEnemies[i - 1];
                     activeEnemies[i - 1] = temp;
+                    i--;
                 }
 
-                i--;
+                else
+                {
+                    terminate = true;
+
+                }
             }
 
             currentGameObject.SetActive(true);

@@ -15,6 +15,8 @@ public class Enemy : MonoBehaviour
     [Tooltip("Text to type in order to destroy enemy")]
     public string text = "johanes";
     [Tooltip("Enemy speed toward player")]
+    public int health;
+
     public float speed = 1;
     [Tooltip("Angle from y axis which represent enemy's angle of view when chasing player (in degrees)")]
     public float viewAngle = 60;
@@ -34,26 +36,28 @@ public class Enemy : MonoBehaviour
     private Spawner spawner;
     private float yLowerBound = -10;
     private TextMeshProUGUI textUI;
+    private InputAssets.PlayerController playerController;
 
     private void Awake()
     {
         playerTransform = GameObject.Find("Player").GetComponentInChildren<InputAssets.PlayerController>().transform;
         _input = playerTransform.GetComponent<InputAssets.InputManager>();
         playerRB = playerTransform.GetComponent<Rigidbody2D>();
+        playerController = playerTransform.GetComponent<InputAssets.PlayerController>();
 
         spawner = GameObject.Find("Enemy Spawner").GetComponent<Spawner>();
 
         enemyCanvas = GetComponentInChildren<Canvas>();
         textUI = enemyCanvas.GetComponentInChildren<TextMeshProUGUI>();
 
-        enemyState = EnemyState.dead;
+        enemyState = EnemyState.live;
 
         rb = GetComponent<Rigidbody2D>();
         ignoreLimit = false;
     }
     void Start()
     {
-        
+        health = text.Length;
     }
 
     void FixedUpdate()
@@ -72,7 +76,7 @@ public class Enemy : MonoBehaviour
         DetectType();
     }
 
-    private void LateUpdate()
+    void LateUpdate()
     {
         DetectLife();
     }
@@ -119,6 +123,7 @@ public class Enemy : MonoBehaviour
                 if (_input.alphabets[idx])
                 {
                     text = text.Remove(0, 1);
+                    playerController.Shoot(currentChar);
                 }
             }
         }
@@ -126,7 +131,7 @@ public class Enemy : MonoBehaviour
 
     void DetectLife()
     {
-        if (text.Length == 0 && enemyState == EnemyState.live)
+        if (health == 0 && enemyState == EnemyState.live)
         {
 
             if (enemyType != EnemyType.bomb)
@@ -147,10 +152,16 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     { 
-
+        // hitting player
         if (collision.gameObject.GetComponent<InputAssets.PlayerController>())
         {
             HitPlayer();
+        }
+
+        // hitting projectile
+        else if (collision.gameObject.GetComponent<Projectile>() && gameObject == playerController.currentTarget)
+        {
+            health--;
         }
     }
 
