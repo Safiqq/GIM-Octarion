@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 #endif
 
 using TMPro;
+using System.Collections;
 
 namespace InputAssets
 {
@@ -21,6 +22,12 @@ namespace InputAssets
 		public bool isTargeting = false;
         [Tooltip("The enemy that player is currently targeting")]
 		public GameObject currentTarget = null;
+		[Tooltip("Projectile prefab")]
+		public GameObject projectilePrefab;
+		[Tooltip("Projectile speed")]
+		public float projectileSpeed = 10;
+
+		private Queue projectiles = new Queue();
 
 #if ENABLE_INPUT_SYSTEM
 		private PlayerInput _playerInput;
@@ -44,7 +51,17 @@ namespace InputAssets
 
 		private void Awake()
 		{
+			GameObject newProjectile;
+
 			spawner = GameObject.Find("Enemy Spawner").GetComponent<Spawner>();
+
+			for (int i = 0; i < 50; i++)
+			{
+				newProjectile = Instantiate(projectilePrefab, transform);
+				newProjectile.SetActive(false);
+
+				projectiles.Enqueue(newProjectile);
+			}
 		}
 
 		private void Start()
@@ -85,6 +102,11 @@ namespace InputAssets
 			if (_input.target)
             {
 				isTargeting = !isTargeting;
+
+				if (!isTargeting)
+                {
+					CancelTarget();
+                }
             }
 
 			if (isTargeting)
@@ -146,6 +168,7 @@ namespace InputAssets
         {
 			currentTarget = spawner.activeEnemies[idx];
 			currentTarget.GetComponentInChildren<TextMeshProUGUI>().color = Color.green;
+			currentTarget.GetComponent<Enemy>().isOnTarget = true;
 
 			targetIdx = idx;
 		}
@@ -153,12 +176,22 @@ namespace InputAssets
 		private void CancelTarget()
         {
 			currentTarget.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+			currentTarget.GetComponent<Enemy>().isOnTarget = false;
 			currentTarget = null;
 
 			targetIdx = -1;
 		}
+		public void Shoot(char character = '\0')
+		{
+			GameObject currentProjectile = (GameObject) projectiles.Dequeue();
+			currentProjectile.transform.position = transform.position;
+			projectiles.Enqueue(currentProjectile);
 
-        private void OnTriggerEnter2D(Collider2D collision)
+			currentProjectile.GetComponent<Projectile>().character = character;
+			currentProjectile.SetActive(true);
+		}
+
+		private void OnTriggerEnter2D(Collider2D collision)
         {
             if (collision.gameObject.GetComponent<Enemy>())
             {
