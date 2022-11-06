@@ -17,6 +17,8 @@ namespace InputAssets
 		[Header("Player")]
 		[Tooltip("Player's health")]
 		public int health = 3;
+		[Tooltip("Player's speed")]
+		public int speed = 1;
 
 		[Tooltip("Tells whether player is targeting an enemy")]
 		public bool isTargeting = false;
@@ -27,6 +29,7 @@ namespace InputAssets
 		[Tooltip("Projectile speed")]
 		public float projectileSpeed = 10;
 
+		private Rigidbody2D _rb;
 		private Queue projectiles = new Queue();
 
 #if ENABLE_INPUT_SYSTEM
@@ -66,6 +69,7 @@ namespace InputAssets
 
 		private void Start()
 		{
+			_rb = GetComponent<Rigidbody2D>();
 			_input = GetComponent<InputManager>();
 #if ENABLE_INPUT_SYSTEM
 			_playerInput = GetComponent<PlayerInput>();
@@ -93,7 +97,11 @@ namespace InputAssets
 
 		private void Move()
 		{
-			
+			Vector2 inputVelocity = _input.move;
+			Vector2 currentVelocity = Vector2.zero;
+			Vector2 newVelocity = ((Vector2.up * inputVelocity.y) + (Vector2.right * inputVelocity.x)).normalized * speed;
+
+			_rb.velocity = Vector2.SmoothDamp(_rb.velocity, newVelocity, ref currentVelocity, Time.deltaTime);
 		}
 
 		private void ChangeTarget()
