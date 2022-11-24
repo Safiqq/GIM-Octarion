@@ -19,7 +19,7 @@ namespace InputAssets
 		[Tooltip("Player's health")]
 		public int health = 3;
 		[Tooltip("Player's speed")]
-		public int speed = 3;
+		public int speed = 1;
 
 		[Tooltip("Tells whether player is targeting an enemy")]
 		public bool isTargeting = false;
@@ -42,12 +42,6 @@ namespace InputAssets
     	// private TextMeshProUGUI textUI;
 		private int targetIdx = 0;
 		[SerializeField] public TMP_Text HPtext;
-
-		// public static void DumpToConsole(object obj)
-		// {
-		// 	var output = JsonUtility.ToJson(obj, true);
-		// 	Debug.Log(output);
-		// }
 
 		private bool IsCurrentDeviceMouse
 		{
@@ -75,6 +69,7 @@ namespace InputAssets
 
 				projectiles.Enqueue(newProjectile);
 			}
+			HPtext.text = "" + health;
 		}
 
 		private void Start()

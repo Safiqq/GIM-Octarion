@@ -62,8 +62,6 @@ public class Enemy : MonoBehaviour
 
     void FixedUpdate()
     {
-        Debug.Log(health);
-
         Move();
 
         if (transform.position.y < yLowerBound)

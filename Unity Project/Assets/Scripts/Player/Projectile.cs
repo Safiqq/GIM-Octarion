@@ -39,6 +39,5 @@ public class Projectile : MonoBehaviour
         {
             gameObject.SetActive(false);
         }
-        Debug.Log("ONTRIGEGERENTER2d");
     }
 }

@@ -137,7 +137,6 @@ namespace InputAssets
 
 		public void OnTarget(InputValue value)
         {
-			// Debug.Log(value.isPressed);
 			TargetInput(value.isPressed);
         }
 
