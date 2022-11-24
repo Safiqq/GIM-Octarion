@@ -25,7 +25,6 @@ namespace InputAssets
 		private int alphabetCount = 0;
 
 #if ENABLE_INPUT_SYSTEM
-		
 		public void OnMove(InputValue value)
 		{
 			MoveInput(value.Get<Vector2>());
@@ -138,6 +137,7 @@ namespace InputAssets
 
 		public void OnTarget(InputValue value)
         {
+			// Debug.Log(value.isPressed);
 			TargetInput(value.isPressed);
         }
 

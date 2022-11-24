@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace InputAssets
 {
@@ -18,7 +19,7 @@ namespace InputAssets
 		[Tooltip("Player's health")]
 		public int health = 3;
 		[Tooltip("Player's speed")]
-		public int speed = 1;
+		public int speed = 3;
 
 		[Tooltip("Tells whether player is targeting an enemy")]
 		public bool isTargeting = false;
@@ -38,7 +39,15 @@ namespace InputAssets
 		private InputManager _input;
 		private GameObject _mainCamera;
 		private Spawner spawner;
+    	// private TextMeshProUGUI textUI;
 		private int targetIdx = 0;
+		[SerializeField] public TMP_Text HPtext;
+
+		public static void DumpToConsole(object obj)
+		{
+			var output = JsonUtility.ToJson(obj, true);
+			Debug.Log(output);
+		}
 
 		private bool IsCurrentDeviceMouse
 		{
@@ -56,6 +65,7 @@ namespace InputAssets
 		{
 			GameObject newProjectile;
 
+			// textUI = GetComponentInChildren<TextMeshProUGUI>();
 			spawner = GameObject.Find("Enemy Spawner").GetComponent<Spawner>();
 
 			for (int i = 0; i < 50; i++)
@@ -109,6 +119,7 @@ namespace InputAssets
 
 			if (_input.target)
             {
+				DumpToConsole(_input);
 				isTargeting = !isTargeting;
 
 				if (!isTargeting)
@@ -204,7 +215,7 @@ namespace InputAssets
             if (collision.gameObject.GetComponent<Enemy>())
             {
 				health--;
-
+				HPtext.text = "" + health;
 				if (health <= 0)
                 {
 
