@@ -62,6 +62,8 @@ public class Enemy : MonoBehaviour
 
     void FixedUpdate()
     {
+        Debug.Log(health);
+
         Move();
 
         if (transform.position.y < yLowerBound)
@@ -133,7 +135,6 @@ public class Enemy : MonoBehaviour
     {
         if (health == 0 && enemyState == EnemyState.live)
         {
-
             if (enemyType != EnemyType.bomb)
             {
                 Terminate();
@@ -159,7 +160,7 @@ public class Enemy : MonoBehaviour
         }
 
         // hitting projectile
-        else if (collision.gameObject.GetComponent<Projectile>() && gameObject == playerController.currentTarget)
+        else if (collision.gameObject.GetComponent<Projectile>() && gameObject == collision.gameObject.GetComponent<Projectile>().target)
         {
             health--;
         }

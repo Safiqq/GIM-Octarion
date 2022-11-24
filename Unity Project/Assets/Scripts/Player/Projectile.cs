@@ -8,7 +8,7 @@ public class Projectile : MonoBehaviour
     float speed;
     Rigidbody2D rb;
     InputAssets.PlayerController playerController;
-    GameObject target;
+    public GameObject target;
 
     private void Awake()
     {
@@ -21,25 +21,24 @@ public class Projectile : MonoBehaviour
     private void Start()
     {
         rb.velocity = Vector2.up * speed;
+        target = playerController.currentTarget;
     }
+
     private void FixedUpdate()
     {
         Vector2 currentSpeed = Vector2.zero;
-
-        target = playerController.currentTarget;
-
         if (target)
         {
             rb.velocity = Vector2.SmoothDamp(rb.velocity, (target.transform.position - transform.position).normalized * speed, ref currentSpeed, Time.deltaTime);
-
         }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.GetComponent<Enemy>() && playerController.currentTarget == collision.gameObject)
+        if (collision.gameObject.GetComponent<Enemy>()) // && target == collision.gameObject
         {
             gameObject.SetActive(false);
         }
+        Debug.Log("ONTRIGEGERENTER2d");
     }
 }

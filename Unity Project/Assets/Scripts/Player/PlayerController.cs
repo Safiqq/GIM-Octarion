@@ -43,11 +43,11 @@ namespace InputAssets
 		private int targetIdx = 0;
 		[SerializeField] public TMP_Text HPtext;
 
-		public static void DumpToConsole(object obj)
-		{
-			var output = JsonUtility.ToJson(obj, true);
-			Debug.Log(output);
-		}
+		// public static void DumpToConsole(object obj)
+		// {
+		// 	var output = JsonUtility.ToJson(obj, true);
+		// 	Debug.Log(output);
+		// }
 
 		private bool IsCurrentDeviceMouse
 		{
@@ -119,7 +119,7 @@ namespace InputAssets
 
 			if (_input.target)
             {
-				DumpToConsole(_input);
+				// DumpToConsole(_input);
 				isTargeting = !isTargeting;
 
 				if (!isTargeting)
@@ -214,11 +214,14 @@ namespace InputAssets
         {
             if (collision.gameObject.GetComponent<Enemy>())
             {
-				health--;
+				if(collision.gameObject.GetComponent<Enemy>().health > 0)
+				{
+					health--;
+				}
 				HPtext.text = "" + health;
 				if (health <= 0)
                 {
-
+					// Terminate();
                 }
             }
         }
