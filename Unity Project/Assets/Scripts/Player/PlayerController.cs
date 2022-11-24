@@ -39,7 +39,6 @@ namespace InputAssets
 		private InputManager _input;
 		private GameObject _mainCamera;
 		private Spawner spawner;
-    	// private TextMeshProUGUI textUI;
 		private int targetIdx = 0;
 		[SerializeField] public TMP_Text HPtext;
 
@@ -59,7 +58,6 @@ namespace InputAssets
 		{
 			GameObject newProjectile;
 
-			// textUI = GetComponentInChildren<TextMeshProUGUI>();
 			spawner = GameObject.Find("Enemy Spawner").GetComponent<Spawner>();
 
 			for (int i = 0; i < 50; i++)

@@ -9,11 +9,18 @@ public class Enemy : MonoBehaviour
     public enum EnemyType { mobs, bomb, boss};
     public enum EnemyState { live, dead}
 
+    private string[] kata = new[]
+    {
+        "sendiri", "bukan", "sejak", "dia", "bila", "terhadap", "akan", "terjadi", "jumlah", "jauh",
+        "tidak", "bagian", "juga", "sudah", "antara", "uang", "ada", "hidup", "baik", "kepada",
+        "kami", "merupakan", "masuk", "tapi", "punya", "sebab", "bahwa", "ini", "ketika", "bukan"
+    };
+
     [Header("Enemy Properties")]
     [Tooltip("Enemy type")]
     public EnemyType enemyType;
     [Tooltip("Text to type in order to destroy enemy")]
-    public string text = "johanes";
+    private string text;
     [Tooltip("Enemy speed toward player")]
     public int health;
 
@@ -55,8 +62,11 @@ public class Enemy : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         ignoreLimit = false;
     }
+
     void Start()
     {
+        int rand = Random.Range(0, kata.Length - 1);
+        text = kata[rand];
         health = text.Length;
     }
 
