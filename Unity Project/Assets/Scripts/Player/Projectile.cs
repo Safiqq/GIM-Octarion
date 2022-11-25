@@ -22,6 +22,7 @@ public class Projectile : MonoBehaviour
     {
         rb.velocity = Vector2.up * speed;
         target = playerController.currentTarget;
+		GetComponent<AudioSource>().Play();
     }
 
     private void FixedUpdate()

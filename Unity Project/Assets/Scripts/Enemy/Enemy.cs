@@ -28,7 +28,7 @@ public class Enemy : MonoBehaviour
     [Tooltip("Angle from y axis which represent enemy's angle of view when chasing player (in degrees)")]
     public float viewAngle = 60;
     [Tooltip("Force magnitude when enemy collides with player")]
-    public float knockBackMagnitude = 10;
+    public float knockBackMagnitude = 0;
     [Tooltip("Enemy canvas to show its text")]
     public Canvas enemyCanvas;
     [Tooltip("Enemy's current state")]

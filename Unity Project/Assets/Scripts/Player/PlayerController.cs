@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 namespace InputAssets
 {
@@ -18,6 +19,8 @@ namespace InputAssets
 		[Header("Player")]
 		[Tooltip("Player's health")]
 		public int health = 3;
+		[Tooltip("Enemies killed")]
+		public int count = 0;
 		[Tooltip("Player's speed")]
 		public int speed = 1;
 
@@ -211,11 +214,19 @@ namespace InputAssets
 				{
 					health--;
 				}
+				else
+				{
+					count++;
+				}
 				HPtext.text = "" + health;
 				if (health <= 0)
                 {
-					// Terminate();
+					SceneManager.LoadScene("Game Over");
                 }
+				if (count >= 10)
+				{
+					SceneManager.LoadScene("Win");
+				}
             }
         }
     }
